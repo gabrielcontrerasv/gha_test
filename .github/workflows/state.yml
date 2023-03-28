@@ -64,8 +64,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
       - name: Save workflow state to S3 final
         run: |
-            echo "${{ toJson(steps) }}" > workflow_state.json
-            sed -i 's/\"null\"/null/g' workflow_state.json
+            echo "${{ toJson(github) }}" > workflow_state.json
             aws s3 cp ./workflow_state.json s3://statebenchmark/workflow_state.json
         env:
             AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
