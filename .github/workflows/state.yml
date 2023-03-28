@@ -8,47 +8,45 @@ on:
 env:
   STATE_BUCKET: statebenchmark
 
-  jobs:
-    call-jsonplaceholder:
-      runs-on: ubuntu-latest
-      steps:
-        - name: Call JSONPlaceholder
-          run: |
-            curl https://jsonplaceholder.typicode.com/todos > response.json
+jobs:
+  call-jsonplaceholder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call JSONPlaceholder
+        run: |
+          curl https://jsonplaceholder.typicode.com/todos > response.json
   
-        - name: Extract environment variables
-          id: env-vars
-          run: |
-                printenv | yq eval -j | echo "::set-output name=env::$(cat)"
-              shell: bash
-        - name: Save environment variables state to S3
-          run: |
-            echo "${{fromJson(steps.env-vars.outputs.env)}}" > env_vars_state.json
-            aws s3 cp ./env_vars_state.json s3://statebenchmark/env_vars_state.json
-          env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
-            AWS_REGION: us-east-1
-            STATE_BUCKET: statebenchmark
+      - name: Extract environment variables
+        id: env-vars
+        run: printenv | yq eval -j | echo "::set-output name=env::$(cat)"
   
-        - name: Configure AWS credentials
-          uses: aws-actions/configure-aws-credentials@v1
-          with:
-            aws-access-key-id: ${{ secrets.AWSACCESSKEY }}
-            aws-secret-access-key: ${{ secrets.AWSSECRETACCESS }}
-            aws-region: us-east-1
+      - name: Save environment variables state to S3
+        run: |
+          echo "${{ fromJson(steps.env-vars.outputs.env) }}" > env_vars_state.json
+          aws s3 cp ./env_vars_state.json s3://statebenchmark/env_vars_state.json
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
+          AWS_REGION: us-east-1
+          STATE_BUCKET: statebenchmark
   
-        - name: Call GitHub Actions
-          run: |
-            echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github }}\", \"status\": \"${{ job.status }}\"}" > state.json
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWSACCESSKEY }}
+          aws-secret-access-key: ${{ secrets.AWSSECRETACCESS }}
+          aws-region: us-east-1
   
-        - name: Save state to S3
-          uses: jakejarvis/s3-sync-action@master
-          with:
-            args: --no-progress --exclude '*.git/*'
-          env:
-            AWS_S3_BUCKET: ${{ env.STATE_BUCKET }}
-            AWS_REGION: us-east-1
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
+      - name: Call GitHub Actions
+        run: |
+          echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github }}\", \"status\": \"${{ job.status }}\"}" > state.json
   
+      - name: Save state to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --no-progress --exclude '*.git/*'
+        env:
+          AWS_S3_BUCKET: ${{ env.STATE_BUCKET }}
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
