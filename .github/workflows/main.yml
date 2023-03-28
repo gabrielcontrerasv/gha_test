@@ -28,4 +28,4 @@ jobs:
         # Replace the above command with your script to generate the logs
 
     - name: Sync logs to S3
-      run: aws s3 sync ./workflow_logs s3://your-s3-bucket-name/logs --exclude "*" --include "*.txt"
+      run: aws s3 sync ./workflow_logs s3://statebenchmark/logs --exclude "*" --include "*.txt"
