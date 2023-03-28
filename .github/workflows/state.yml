@@ -15,7 +15,6 @@ jobs:
       - name: Call JSONPlaceholder
         run: |
           curl https://jsonplaceholder.typicode.com/todos > response.json
-          echo "{\"status\": \"$(cat response.json | jq '.title')\"}" > state_placeholder.json
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
