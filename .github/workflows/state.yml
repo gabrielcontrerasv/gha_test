@@ -62,3 +62,12 @@ jobs:
           AWS_REGION: us-east-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
+      - name: Save workflow state to S3 final
+        run: |
+         echo "${{ toJson(steps) }}" > workflow_state.json
+         aws s3 cp ./workflow_state.json s3://statebenchmark/workflow_state.json
+        env:
+            AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
+            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
+            AWS_REGION: us-east-1
+            
