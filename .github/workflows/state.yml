@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Set initial state
         run: |
-            echo "{\"status\": \"${{ job.status }}\"}" > json_placeholder.json
+          echo "{\"status\": \"${{ job.status }}\"}" > json_placeholder.json
       - name: Call JSONPlaceholder
         run: |
           curl https://jsonplaceholder.typicode.com/todos > response.json
@@ -52,7 +52,7 @@ jobs:
           echo "{\"status\": \"starting\"}" > state.json
       - name: Call GitHub Actions
         run: |
-          echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github.job }}\", \"status\": \"${{ job.status }}\"}" > state.json
+          echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github }}\", \"status\": \"${{ job.status }}\"}" > state.json
       - name: Save state to S3
         uses: jakejarvis/s3-sync-action@master
         with:
@@ -62,12 +62,3 @@ jobs:
           AWS_REGION: us-east-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
-      - name: Save workflow state to S3 final
-        run: |
-            echo "${{ toJson(github) }}" > workflow_state.json
-            aws s3 cp ./workflow_state.json s3://statebenchmark/workflow_state.json
-        env:
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
-            AWS_REGION: us-east-1
-            
