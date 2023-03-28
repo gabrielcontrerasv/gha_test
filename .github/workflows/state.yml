@@ -12,9 +12,6 @@ jobs:
   call-jsonplaceholder:
     runs-on: ubuntu-latest
     steps:
-      - name: Set initial state
-        run: |
-          echo "{\"status\": \"${{ job.status }}\"}" > json_placeholder.json
       - name: Call JSONPlaceholder
         run: |
           curl https://jsonplaceholder.typicode.com/todos > response.json
