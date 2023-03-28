@@ -21,8 +21,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWSACCESSKEY}}
           aws-secret-access-key: ${{ secrets.AWSSECRETACCESS }}
           aws-region: us-east-1
-      - name: Save state to S3
-        run: aws s3 cp state_placeholder.json s3://${{ env.STATE_BUCKET }}/state_placeholder.json
       - name: Call GitHub Actions
         run: |
           echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github }}\", \"status\": \"${{ job.status }}\"}" > state.json
