@@ -47,3 +47,18 @@ jobs:
       - name: Save state to S3
         run: aws s3 cp state_githubactions.json s3://${{ env.STATE_BUCKET }}/state_githubactions.json
 
+      - name: Saving github action info
+        run: |
+          echo "{\"status\": \"starting\"}" > state.json
+      - name: Call GitHub Actions
+        run: |
+          echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github.job }}\", \"status\": \"${{ job.status }}\"}" > state.json
+      - name: Save state to S3
+        uses: jakejarvis/s3-sync-action@master
+        with:
+          args: --no-progress --exclude '*.git/*'
+        env:
+          AWS_S3_BUCKET: ${{ env.STATE_BUCKET }}
+          AWS_REGION: us-east-1
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
