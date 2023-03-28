@@ -27,9 +27,6 @@ jobs:
           aws-region: us-east-1
       - name: Save state to S3
         run: aws s3 cp state_placeholder.json s3://${{ env.STATE_BUCKET }}/state_placeholder.json
-      - name: Saving github action info
-        run: |
-          echo "{\"status\": \"starting\"}" > state.json
       - name: Call GitHub Actions
         run: |
           echo "{\"workflow\": \"${{ github.workflow }}\", \"action\": \"${{ github.action }}\", \"sha\": \"${{ github.sha }}\", \"ref\": \"${{ github.ref }}\", \"repository\": \"${{ github.repository }}\", \"event\": \"${{ github.event_name }}\", \"actor\": \"${{ github.actor }}\", \"job\": \"${{ github }}\", \"status\": \"${{ job.status }}\"}" > state.json
