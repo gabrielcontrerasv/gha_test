@@ -16,20 +16,6 @@ jobs:
         run: |
           curl https://jsonplaceholder.typicode.com/todos > response.json
   
-      - name: Extract environment variables
-        id: env-vars
-        run: printenv | yq eval -j | echo "::set-output name=env::$(cat)"
-  
-      - name: Save environment variables state to S3
-        run: |
-          echo "${{ fromJson(steps.env-vars.outputs.env) }}" > env_vars_state.json
-          aws s3 cp ./env_vars_state.json s3://statebenchmark/env_vars_state.json
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWSACCESSKEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWSSECRETACCESS }}
-          AWS_REGION: us-east-1
-          STATE_BUCKET: statebenchmark
-  
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
