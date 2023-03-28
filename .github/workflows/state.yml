@@ -23,7 +23,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWSACCESSKEY}}
-          aws-secret-access-key: ${{ secrets.AWSSECRETACCESSKEY }}
+          aws-secret-access-key: ${{ secrets.AWSSECRETACCESS }}
           aws-region: us-east-1
       - name: Save state to S3
         run: aws s3 cp state_placeholder.json s3://${{ env.STATE_BUCKET }}/state_placeholder.json
@@ -42,7 +42,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWSACCESSKEY }}
-          aws-secret-access-key: ${{ secrets.AWSSECRETACCESSKEY }}
+          aws-secret-access-key: ${{ secrets.AWSSECRETACCESS }}
           aws-region: us-east-1
       - name: Save state to S3
         run: aws s3 cp state_githubactions.json s3://${{ env.STATE_BUCKET }}/state_githubactions.json
